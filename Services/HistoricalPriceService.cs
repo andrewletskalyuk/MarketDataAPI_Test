@@ -1,6 +1,8 @@
 ﻿using MarketDataAPI.Models;
 using MarketDataAPI.Models.InstrumentsClasses;
+using MarketDataAPI.Wrapper;
 using System.Net.Http.Headers;
+using System.Text.Json;
 
 namespace MarketDataAPI.Services;
 
@@ -42,8 +44,31 @@ public class HistoricalPriceService : IHistoricalPriceService
         var uri = $"{_configuration["Fintacharts:URI"]}/api/instruments/v1/instruments?provider=oanda&kind=forex";
 
         var response = await _httpClient.GetAsync(uri);
-        var jsonResponse = await response.Content.ReadAsStringAsync();
 
-        return new List<Instrumenty>();
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Raw JSON response: " + jsonResponse);
+
+            try
+            {
+                var instrumentResponse = JsonSerializer.Deserialize<InstrumentResponse>(jsonResponse,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                        });
+
+                return instrumentResponse?.Data ?? new List<Instrumenty>();
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"JSON deserialization error: {ex.Message}");
+                throw;
+            }
+        }
+        else
+        {
+            throw new HttpRequestException($"Error fetching instruments: {response.StatusCode}");
+        }
     }
 }
