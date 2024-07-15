@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using MarketDataAPI.Data;
+using MarketDataAPI.Data.Entities;
 using MarketDataAPI.Dtos;
 using MarketDataAPI.Models.AssetsModels;
 using MarketDataAPI.Wrapper;
@@ -13,14 +15,16 @@ public class HistoricalPriceService : IHistoricalPriceService
     readonly HttpClient _httpClient;
     readonly IConfiguration _configuration;
     readonly IAuthService _authService;
+    readonly ApplicationDbContext _context;
 
     public HistoricalPriceService(HttpClient httpClient, IConfiguration configuration,
-        IAuthService authService, IMapper mapper)
+        IAuthService authService, IMapper mapper, ApplicationDbContext context)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _authService = authService;
         _mapper = mapper;
+        _context = context;
     }
 
     public async Task<List<HistoricalPriceResponse>> GetHistoricalPricesAsync(HistoricalPriceDto historicalPriceDto)
@@ -99,6 +103,17 @@ public class HistoricalPriceService : IHistoricalPriceService
                         });
 
                 var instrumentDtos = _mapper.Map<List<InstrumentDto>>(instrumentResponse?.Data);
+
+                //Add instuments first time if DB empty
+                var instruments = _mapper.Map<List<Instrumenty>>(instrumentResponse?.Data);
+
+                var full = _context.Instruments.Any();
+
+                if (!full)
+                {
+                    _context.Instruments.AddRange(instruments);
+                    await _context.SaveChangesAsync();
+                }
 
                 return instrumentDtos ?? new List<InstrumentDto>();
             }

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MarketDataAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240715131148_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20240715134510_InstrumentsInitialise")]
+    partial class InstrumentsInitialise
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -48,6 +48,9 @@ namespace MarketDataAPI.Migrations
                     b.Property<string>("Kind")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Price")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Symbol")
                         .IsRequired()
