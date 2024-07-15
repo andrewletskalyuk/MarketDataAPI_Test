@@ -1,4 +1,4 @@
-﻿namespace MarketDataAPI.Models;
+﻿namespace MarketDataAPI.Models.AssetsModels;
 
 public class PriceData
 {

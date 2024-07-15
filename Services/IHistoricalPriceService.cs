@@ -1,12 +1,12 @@
-﻿using MarketDataAPI.Models;
-using MarketDataAPI.Models.InstrumentsClasses;
+﻿using MarketDataAPI.Data.Entities;
+using MarketDataAPI.Dtos;
+using MarketDataAPI.Models.AssetsModels;
 
 namespace MarketDataAPI.Services;
 
 public interface IHistoricalPriceService
 {
-    Task<List<PriceData>> GetHistoricalPricesAsync(string instrumentId, 
-        DateTime startDate, DateTime endDate);
+    Task<List<HistoricalPriceResponse>> GetHistoricalPricesAsync(HistoricalPriceDto historicalPriceDto);
 
-    Task<List<Instrumenty>> GetInstrumentsAsync();
+    Task<List<InstrumentDto>> GetInstrumentsAsync();
 }

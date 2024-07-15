@@ -15,31 +15,31 @@ public class MarketAssetsController : BaseApiController
         _marketAssetService = marketAssetService;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<MarketAsset>>> GetMarketAssets()
-    {
-        var result = await _marketAssetService.GetMarketAssetsAsync();
-        return HandleResult(result);
-    }
+    //[HttpGet]
+    //public async Task<ActionResult<IEnumerable<MarketAsset>>> GetMarketAssets()
+    //{
+    //    var result = await _marketAssetService.GetMarketAssetsAsync();
+    //    return HandleResult(result);
+    //}
 
-    [HttpGet("{id}")]
-    public async Task<ActionResult<MarketAsset>> GetMarketAsset(int id)
-    {
-        var result = await _marketAssetService.GetMarketAssetAsync(id);
-        return HandleResult(result);
-    }
+    //[HttpGet("{id}")]
+    //public async Task<ActionResult<MarketAsset>> GetMarketAsset(int id)
+    //{
+    //    var result = await _marketAssetService.GetMarketAssetAsync(id);
+    //    return HandleResult(result);
+    //}
 
-    [HttpGet("paged")]
-    public async Task<ActionResult<IEnumerable<MarketAsset>>> GetMarketAssetsPaged(int pageNumber = 1, int pageSize = 10)
-    {
-        var result = await _marketAssetService.GetMarketAssetsPagedAsync(pageNumber, pageSize);
-        return HandlePagedResult(result);
-    }
+    //[HttpGet("paged")]
+    //public async Task<ActionResult<IEnumerable<MarketAsset>>> GetMarketAssetsPaged(int pageNumber = 1, int pageSize = 10)
+    //{
+    //    var result = await _marketAssetService.GetMarketAssetsPagedAsync(pageNumber, pageSize);
+    //    return HandlePagedResult(result);
+    //}
 
-    [HttpPost]
-    public async Task<ActionResult<MarketAsset>> PostMarketAsset(MarketAsset marketAsset)
-    {
-        var result = await _marketAssetService.CreateMarketAssetAsync(marketAsset);
-        return HandleResult(result);
-    }
+    //[HttpPost]
+    //public async Task<ActionResult<MarketAsset>> PostMarketAsset(MarketAsset marketAsset)
+    //{
+    //    var result = await _marketAssetService.CreateMarketAssetAsync(marketAsset);
+    //    return HandleResult(result);
+    //}
 }

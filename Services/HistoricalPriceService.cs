@@ -1,5 +1,6 @@
-﻿using MarketDataAPI.Models;
-using MarketDataAPI.Models.InstrumentsClasses;
+﻿using AutoMapper;
+using MarketDataAPI.Dtos;
+using MarketDataAPI.Models.AssetsModels;
 using MarketDataAPI.Wrapper;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -8,30 +9,71 @@ namespace MarketDataAPI.Services;
 
 public class HistoricalPriceService : IHistoricalPriceService
 {
+    readonly IMapper _mapper;
     readonly HttpClient _httpClient;
     readonly IConfiguration _configuration;
     readonly IAuthService _authService;
 
-    public HistoricalPriceService(HttpClient httpClient, IConfiguration configuration, IAuthService authService)
+    public HistoricalPriceService(HttpClient httpClient, IConfiguration configuration,
+        IAuthService authService, IMapper mapper)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _authService = authService;
+        _mapper = mapper;
     }
 
-    public async Task<List<PriceData>> GetHistoricalPricesAsync(string instrumentId, DateTime startDate, DateTime endDate)
+    public async Task<List<HistoricalPriceResponse>> GetHistoricalPricesAsync(HistoricalPriceDto historicalPriceDto)
     {
-        var uri = $"{_configuration["Fintacharts:URI"]}/api/bars/v1/bars/date-range?instrumentId={instrumentId}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
-        var response = await _httpClient.GetFromJsonAsync<List<PriceData>>(uri);
+        var responseList = new List<HistoricalPriceResponse>();
 
-        if (response !=null)
+        var token = await _authService.GetTokenAsync();
+        if (string.IsNullOrEmpty(token))
         {
-            return response;
+            throw new UnauthorizedAccessException("Unable to obtain token.");
         }
-        return new List<PriceData>();
+
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        var provider = "oanda";
+        var interval = "1";
+        var periodicity = "minute";
+        var endDate = DateTime.UtcNow;
+        var startDate = DateTime.UtcNow.AddDays(-1);
+        foreach (var instrumentId in historicalPriceDto.InstrumentIds)
+        {
+            var uri = $"{_configuration["Fintacharts:URI"]}/api/bars/v1/bars/date-range?" +
+                  $"instrumentId={0}&provider={provider}&interval={interval}&periodicity={periodicity}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
+
+            try
+            {
+                var response = await _httpClient.GetAsync(uri);
+
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var priceDataList = JsonSerializer.Deserialize<List<PriceData>>(responseBody,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                    });
+
+                var historicalPriceResponse = new HistoricalPriceResponse
+                {
+                    InstrumentId = instrumentId,
+                    Prices = priceDataList ?? new List<PriceData>()
+                };
+
+                responseList.Add(historicalPriceResponse);
+            }
+            catch (HttpRequestException ex)
+            {
+                throw;
+            }
+        }
+
+        return responseList;
     }
 
-    public async Task<List<Instrumenty>> GetInstrumentsAsync()
+    public async Task<List<InstrumentDto>> GetInstrumentsAsync()
     {
         var token = await _authService.GetTokenAsync();
         if (string.IsNullOrEmpty(token))
@@ -48,7 +90,6 @@ public class HistoricalPriceService : IHistoricalPriceService
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            Console.WriteLine("Raw JSON response: " + jsonResponse);
 
             try
             {
@@ -58,11 +99,12 @@ public class HistoricalPriceService : IHistoricalPriceService
                             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
                         });
 
-                return instrumentResponse?.Data ?? new List<Instrumenty>();
+                var instrumentDtos = _mapper.Map<List<InstrumentDto>>(instrumentResponse?.Data);
+
+                return instrumentDtos ?? new List<InstrumentDto>();
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"JSON deserialization error: {ex.Message}");
                 throw;
             }
         }

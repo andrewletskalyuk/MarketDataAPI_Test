@@ -1,4 +1,6 @@
-﻿namespace MarketDataAPI.Models.InstrumentsClasses;
+﻿using MarketDataAPI.Data.Entities;
+
+namespace MarketDataAPI.Models.InstrumentsClasses;
 
 public class Mapping
 {

@@ -1,3 +1,4 @@
+using MarketDataAPI.AutoMapper;
 using MarketDataAPI.Data;
 using MarketDataAPI.Services;
 using MarketDataAPI.SignalR;
@@ -14,9 +15,12 @@ builder.Services.AddSwaggerGen(c =>
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Market Data API", Version = "v1" });
 });
 
-// access to dbcontext
+// Access to dbcontext
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Automapper
+builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 // Add SignalR
 builder.Services.AddSignalR();

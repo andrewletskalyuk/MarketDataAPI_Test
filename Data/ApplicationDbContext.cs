@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MarketDataAPI.Data.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MarketDataAPI.Data;
 
@@ -7,6 +8,7 @@ public class ApplicationDbContext : DbContext
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
     }
-
-    public DbSet<MarketAsset> MarketAssets { get; set; }
+    public DbSet<Instrumenty> Instruments { get; set; }
+    public DbSet<Mappings> Mappings { get; set; }
+    public DbSet<MappingDetails> MappingDetails { get; set; }
 }

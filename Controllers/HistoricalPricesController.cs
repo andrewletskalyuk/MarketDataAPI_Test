@@ -1,5 +1,7 @@
-﻿using MarketDataAPI.Models;
-using MarketDataAPI.Models.InstrumentsClasses;
+﻿using MarketDataAPI.Data.Entities;
+using MarketDataAPI.Dtos;
+using MarketDataAPI.Models;
+using MarketDataAPI.Models.AssetsModels;
 using MarketDataAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,11 +18,11 @@ public class HistoricalPricesController : BaseApiController
         _historicalPriceService = historicalPriceService;
     }
 
-    [HttpGet("{instrumentId}")]
-    public async Task<IActionResult> GetHistoricalPrices(string instrumentId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+    [HttpPost("historicalPrice")]
+    public async Task<IActionResult> GetHistoricalPrices([FromBody] HistoricalPriceDto historicalPriceDto)
     {
-        var result = await _historicalPriceService.GetHistoricalPricesAsync(instrumentId, startDate, endDate);
-        return HandleResult(Result<List<PriceData>>.Success(result));
+        var result = await _historicalPriceService.GetHistoricalPricesAsync(historicalPriceDto);
+        return HandleResult(Result<List<HistoricalPriceResponse>>.Success(result));
     }
 
     [HttpGet("instruments")]

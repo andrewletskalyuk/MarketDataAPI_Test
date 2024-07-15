@@ -1,4 +1,4 @@
-﻿using MarketDataAPI.Models.InstrumentsClasses;
+﻿using MarketDataAPI.Data.Entities;
 
 namespace MarketDataAPI.Wrapper;
 
