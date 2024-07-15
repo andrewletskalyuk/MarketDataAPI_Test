@@ -9,11 +9,11 @@ namespace MarketDataAPI.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HistoricalPricesController : BaseApiController
+public class InstrumentsDataController : BaseApiController
 {
     private readonly IHistoricalPriceService _historicalPriceService;
 
-    public HistoricalPricesController(IHistoricalPriceService historicalPriceService)
+    public InstrumentsDataController(IHistoricalPriceService historicalPriceService)
     {
         _historicalPriceService = historicalPriceService;
     }
