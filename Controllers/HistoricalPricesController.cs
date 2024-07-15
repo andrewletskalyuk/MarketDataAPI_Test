@@ -19,7 +19,7 @@ public class HistoricalPricesController : BaseApiController
     }
 
     [HttpPost("historicalPrice")]
-    public async Task<IActionResult> GetHistoricalPrices([FromBody] HistoricalPriceDto historicalPriceDto)
+    public async Task<IActionResult> GetHistoricalPrices([FromBody]HistoricalPriceDto historicalPriceDto)
     {
         var result = await _historicalPriceService.GetHistoricalPricesAsync(historicalPriceDto);
         return HandleResult(Result<List<HistoricalPriceResponse>>.Success(result));

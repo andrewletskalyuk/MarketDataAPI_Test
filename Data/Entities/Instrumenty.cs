@@ -13,6 +13,7 @@ public class Instrumenty
     public decimal TickSize { get; set; }
     public string Currency { get; set; } = "";
     public string BaseCurrency { get; set; } = "";
+    public int Price { get; set; }
 
     [ForeignKey("InstrumentyId")]
     public Mappings? Mappings { get; set; }

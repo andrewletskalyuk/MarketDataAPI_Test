@@ -1,5 +1,4 @@
-﻿using MarketDataAPI.Data.Entities;
-using MarketDataAPI.Dtos;
+﻿using MarketDataAPI.Dtos;
 using MarketDataAPI.Models.AssetsModels;
 
 namespace MarketDataAPI.Services;

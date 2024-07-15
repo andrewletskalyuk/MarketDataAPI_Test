@@ -39,11 +39,10 @@ public class HistoricalPriceService : IHistoricalPriceService
         var interval = "1";
         var periodicity = "minute";
         var endDate = DateTime.UtcNow;
-        var startDate = DateTime.UtcNow.AddDays(-1);
         foreach (var instrumentId in historicalPriceDto.InstrumentIds)
         {
             var uri = $"{_configuration["Fintacharts:URI"]}/api/bars/v1/bars/date-range?" +
-                  $"instrumentId={0}&provider={provider}&interval={interval}&periodicity={periodicity}&startDate={startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
+                  $"instrumentId={0}&provider={provider}&interval={interval}&periodicity={periodicity}&startDate={historicalPriceDto.startDate:yyyy-MM-dd}&endDate={endDate:yyyy-MM-dd}";
 
             try
             {
